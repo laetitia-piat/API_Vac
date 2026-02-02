@@ -68,14 +68,14 @@ http://localhost:8000
 
 ## 🔍 Endpoints disponibles
 
-Health check
+### Health check
 GET /health
 
 Réponse :
 { "ok": true }
 
 
-Calcul du salaire
+### Calcul du salaire
 POST /calculate
 
 Corps de la requête
