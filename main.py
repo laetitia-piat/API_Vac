@@ -20,8 +20,8 @@ class SalaryInput(BaseModel):
     heures_dimanche: float
 
 
-TAUX_HORAIRE = 12.2561      
-MAJORATION_DIMANCHE = 7.86
+TAUX_HORAIRE = float(os.getenv("TAUX_HORAIRE", "12.2561"))   
+MAJORATION_DIMANCHE = float(os.getenv("MAJORATION_DIMANCHE", "7.86"))
 
 @app.get("/health")
 def health():
