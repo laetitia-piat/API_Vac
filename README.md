@@ -49,13 +49,46 @@ API_Vac/
 ---
 
 ## ▶️ Lancer l’API en local
+uvicorn main:app --reload --port 8000
 
 ### 1️⃣ Créer un environnement virtuel
 python -m venv .venv
 source .venv/bin/activate   # Windows : .venv\Scripts\activate
 
-###2️⃣ Installer les dépendances
+2️⃣ Installer les dépendances
 pip install -r requirements.txt
 
 3️⃣ Lancer le serveur
 uvicorn main:app --reload --port 8000
+
+📍 API disponible sur :
+http://localhost:8000
+
+---
+
+🔍 Endpoints disponibles
+
+#Health check
+GET /health
+
+Réponse :
+{ "ok": true }
+
+
+#Calcul du salaire
+POST /calculate
+
+Corps de la requête
+{
+  "heures": 120,
+  "heures_dimanche": 16,
+  "type": "Tamaris"
+}
+Réponse
+{
+  "heures_normales": 104,
+  "heures_dimanche": 16,
+  "salaire_net": 1850.32,
+  "salaire_brut": 2405.78
+}
+
