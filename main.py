@@ -5,13 +5,11 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-origins_env = os.getenv("FRONTEND_ORIGINS", "http://localhost:3000")
-allowed_origins = [o.strip() for o in origins_env.split(",") if o.strip()]
-
+frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=[frontend_origin],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
