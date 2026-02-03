@@ -23,6 +23,7 @@ app.add_middleware(
 class SalaryInput(BaseModel):
     heures: float
     heures_dimanche: float
+    heures_nuit: float
     type: str
 
 
@@ -39,6 +40,7 @@ def calculate(data: SalaryInput):
     heures_travaillees = data.heures
     heures_dimanches = data.heures_dimanche
     type = data.type
+    heures_travaillees_nuit = data.heures_nuit
 
     match type:
         case "AFTC": 
@@ -60,12 +62,19 @@ def calculate(data: SalaryInput):
             salaire_net = salaire_brut * 0.782
         case "HPEL":
             salaire_base = 12.021 * heures_travaillees
+            print(salaire_base)
             aug_forfaitaire = salaire_base / 56.7
+            print(aug_forfaitaire)
             majoration_dimanche = heures_dimanches * 5.83
+            print(majoration_dimanche)
             revalorisation_segur = heures_travaillees * 1.358
+            print(revalorisation_segur)
             revalorisation_segur2 = heures_travaillees * 0.125
-            rag_mensuelle = heures_travaillees * 0.6925
-            indemnite_sujetion_nuit = heures_travaillees * 2.215 
+            print(revalorisation_segur2)
+            rag_mensuelle = heures_travaillees* 0.6925
+            print(rag_mensuelle)
+            indemnite_sujetion_nuit = heures_travaillees_nuit * 2.215 
+            print(indemnite_sujetion_nuit)
             indemnite_fin_de_contrat = 0.10 * (salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle +indemnite_sujetion_nuit)
             indemnite_conges_payes = 0.10 * (salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle + indemnite_sujetion_nuit + indemnite_fin_de_contrat)
             salaire_brut = salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle + indemnite_sujetion_nuit + indemnite_fin_de_contrat + indemnite_conges_payes
