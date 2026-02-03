@@ -36,7 +36,7 @@ def calculate(data: SalaryInput):
     heures_travaillees = data.heures
     heures_dimanches = data.heures_dimanche
     type = data.type
-    heures_travaillees_nuit = data.heures_nuit
+    heures_nuit = data.heures_nuit
 
     match type:
         case "AFTC": 
@@ -69,7 +69,7 @@ def calculate(data: SalaryInput):
             print(revalorisation_segur2)
             rag_mensuelle = heures_travaillees* 0.6925
             print(rag_mensuelle)
-            indemnite_sujetion_nuit = heures_travaillees_nuit * 2.215 
+            indemnite_sujetion_nuit = heures_nuit * 2.215 
             print(indemnite_sujetion_nuit)
             indemnite_fin_de_contrat = 0.10 * (salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle +indemnite_sujetion_nuit)
             indemnite_conges_payes = 0.10 * (salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle + indemnite_sujetion_nuit + indemnite_fin_de_contrat)
@@ -83,7 +83,7 @@ def calculate(data: SalaryInput):
     return {
         "heures_normales": heures_travaillees - heures_dimanches,
         "heures_dimanche": heures_dimanches,
-        "heures_nuit": heures_travaillees_nuit,
+        "heures_nuit": heures_nuit,
         "salaire_net": round(salaire_net, 2),
         "salaire_brut": round(salaire_brut, 2)
     }
