@@ -26,8 +26,9 @@ class SalaryInput(BaseModel):
     type: str
 
 
-TAUX_HORAIRE = float(os.getenv("TAUX_HORAIRE", "12.2561"))   
-MAJORATION_DIMANCHE = float(os.getenv("MAJORATION_DIMANCHE", "7.86"))
+taux_horaire = float(os.getenv("taux_horaire", "12.2561"))   
+majoration_dimanche = float(os.getenv("majoration_dimanche", "7.86"))
+indemnite_sujetion_nuit = 0.0
 
 @app.get("/health")
 def health():
@@ -35,36 +36,48 @@ def health():
 
 @app.post("/calculate")
 def calculate(data: SalaryInput):
-    heuresTravaillees = data.heures
-    heuresDimanches = data.heures_dimanche
+    heures_travaillees = data.heures
+    heures_dimanches = data.heures_dimanche
     type = data.type
 
     match type:
-        case "Tamaris": 
-            salaireBaseMensu = TAUX_HORAIRE * 151.67
-            absenceEntreeSortie = (151.67 - heuresTravaillees) * 13.8253
-            salaireBase = salaireBaseMensu - absenceEntreeSortie
-            indeminteSujetion = 0.0921 * (heuresTravaillees * TAUX_HORAIRE)
-            majorationDimanche =heuresDimanches * MAJORATION_DIMANCHE
-            indemnitePrecarite = 0.10* (salaireBase + indeminteSujetion + majorationDimanche +238)
-            indemniteCongesPayes = 0.10 * (salaireBase + indeminteSujetion + majorationDimanche + indemnitePrecarite+238)
-            salaireBrut = salaireBase + indeminteSujetion + majorationDimanche + indemnitePrecarite + indemniteCongesPayes + 238
-            salaireNet = salaireBrut * 0.769
-        case "Diabeto":
-            salaireBase = 12.45 * heuresTravaillees
-            revalorisationSegur =  (heuresTravaillees / 160) * 238
-            indemnitePrecarite = (salaireBase + revalorisationSegur) * 0.10
-            indemniteCongesPayes = (salaireBase + revalorisationSegur + indemnitePrecarite) *0.10
-            salaireBrut = salaireBase  + revalorisationSegur +indemnitePrecarite + indemniteCongesPayes
-            salaireNet = salaireBrut * 0.782
+        case "AFTC": 
+            salaire_base_mensu = taux_horaire * 151.67
+            absence_entree_sortie = (151.67 - heures_travaillees) * 13.8253
+            salaire_base = salaire_base_mensu - absence_entree_sortie
+            indemnite_sujetion = 0.0921 * (heures_travaillees * taux_horaire)
+            majoration_dimanche =heures_dimanches * majoration_dimanche
+            indemnite_precarite = 0.10* (salaire_base + indemnite_sujetion + majoration_dimanche +238)
+            indemnite_conges_payes = 0.10 * (salaire_base + indemnite_sujetion + majoration_dimanche + indemnite_precarite+238)
+            salaire_brut = salaire_base + indemnite_sujetion + majoration_dimanche + indemnite_precarite + indemnite_conges_payes + 238
+            salaire_net = salaire_brut * 0.769
+        case "LNA":
+            salaire_base = 12.45 * heures_travaillees
+            revalorisation_segur =  (heures_travaillees / 160) * 238
+            indemnite_precarite = (salaire_base + revalorisation_segur) * 0.10
+            indemnite_conges_payes = (salaire_base + revalorisation_segur + indemnite_precarite) *0.10
+            salaire_brut = salaire_base  + revalorisation_segur +indemnite_precarite + indemnite_conges_payes
+            salaire_net = salaire_brut * 0.782
+        case "HPEL":
+            salaire_base = 12.021 * heures_travaillees
+            aug_forfaitaire = salaire_base / 56.7
+            majoration_dimanche = heures_dimanches * 5.83
+            revalorisation_segur = heures_travaillees * 1.358
+            revalorisation_segur2 = heures_travaillees * 0.125
+            rag_mensuelle = heures_travaillees * 0.6925
+            indemnite_sujetion_nuit = heures_travaillees * 2.215 
+            indemnite_fin_de_contrat = 0.10 * (salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle +indemnite_sujetion_nuit)
+            indemnite_conges_payes = 0.10 * (salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle + indemnite_sujetion_nuit + indemnite_fin_de_contrat)
+            salaire_brut = salaire_base + aug_forfaitaire + majoration_dimanche + revalorisation_segur + revalorisation_segur2 + rag_mensuelle + indemnite_sujetion_nuit + indemnite_fin_de_contrat + indemnite_conges_payes
+            salaire_net = salaire_brut * 0.7864
         case _:
             return {"error": "Type inconnu"}
 
  
 
     return {
-        "heures_normales": heuresTravaillees - heuresDimanches,
-        "heures_dimanche": heuresDimanches,
-        "salaire_net": round(salaireNet, 2),
-        "salaire_brut": round(salaireBrut, 2)
+        "heures_normales": heures_travaillees - heures_dimanches,
+        "heures_dimanche": heures_dimanches,
+        "salaire_net": round(salaire_net, 2),
+        "salaire_brut": round(salaire_brut, 2)
     }
