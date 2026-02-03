@@ -87,6 +87,7 @@ def calculate(data: SalaryInput):
     return {
         "heures_normales": heures_travaillees - heures_dimanches,
         "heures_dimanche": heures_dimanches,
+        "heures_nuit": heures_travaillees_nuit,
         "salaire_net": round(salaire_net, 2),
         "salaire_brut": round(salaire_brut, 2)
     }
